@@ -1,0 +1,368 @@
+﻿<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<title>빵 유지 함유량 계산</title>
+<meta name="description" content="" />
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width" />
+<style>
+html, body {height:100%;}
+body {margin:20px; font-size:16px; background:#eee;}
+h1 {font-size:18px; text-align:center;}
+h2 {font-size:16px; text-align:center;}
+p {margin:0;}
+.inp {width:5em; padding:5px; border:1px solid #666;}
+.f_left {width:300px;}
+.f_right {position:absolute; top:10px; left:300px; right:10px; min-width:320px; font-size:14px;}
+.item {color:#666; text-align:left; margin:0 10px;}
+.item:after {content:''; clear:both; height:0; display:block;}
+.item .attr {display:inline-block; width:80px; color:#333; background-color:#eee; padding:2px 10px;}
+.item .value {display:inline-block; width:50px; border:1px solid #111; color:#333; background-color:#fff; padding:2px 10px;}
+.recipe {position:relative; text-align:left; }
+.recipe.this {background-color:#bababa;}
+.recipe .title {display:block;}
+.recipe + .recipe {margin-top:10px;}
+#cal {font-size:22px; border:1px solid #333; border-radius:10px; display:inline-block; min-width:200px;}
+.mycalcul-result {font-size:14px;}
+.use-this {margin:0 10px; border:1px solid #333; border-radius:10px; font-size:12px;}
+.btn-result {font-size:14px;}
+.btn-result input {display:inline-block; width:50px; border:1px solid #888; color:#333; background-color:#fff; padding:2px 10px;}
+.mycalcul-result {margin:10px 20px;}
+.bread-type {text-align:center; }
+.bread-type a {display:inline-block; border-radius:10px; padding:4px 10px; border:1px solid #888; text-decoration:none;}
+
+</style>
+<script src="/work/work_src/jquery-1.11.3.min.js"></script>
+</head>
+
+
+<body>
+<h1 style="display:none;">Bread Calculator</h1>
+<div class="f_left myRecipe">
+	<h2>나의 배합</h2>
+	<span class="item"><em class="attr">강력분</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">박력분</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">설탕</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">꿀</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">소금</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">이스트</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">탈지분유</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">우유</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">생크림</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">물</em> <input type="number" class="value i-water" /> g</span>
+	<span class="item"><em class="attr">버터</em> <input type="number" class="value" /> g</span>
+	<span class="item"><em class="attr">달걀</em> <input type="number" class="value" /> g</span>
+
+	<div class="btn-result">
+		<input type="text" class="xxx" /> 배로 <button id="calMy" onclick="xxxmulti();">배합량 변경</button>
+	</div>
+</div>
+<div class="f_right">
+	<div class="bread-type">
+		<a href="#" class="white">식빵</a>
+		<a href="#" class="redbean">단팥빵</a>
+		<a href="#" class="bargett">바게트</a>
+	</div>
+	<div class="bread-list">
+		<ul>
+			<li class="recipe"><p><strong class="title">노가미 식빵</strong> 
+				<span>강력분 250</span>, <span>설탕 10</span>, <span>꿀 30</span>, <span>소금 4</span>, <span>이스트 3</span>, <span>우유 80</span>, <span>생크림 80</span>, <span>물 50</span>, <span>버터 20</span></p></li>
+			<li class="recipe"><p><strong class="title">우유 식빵(기능사) (552)</strong> 
+				<span>강력분 300</span>, <span>설탕 15</span>, <span>소금 6</span>, <span>이스트 3</span>, <span>우유 216</span>, <span>버터 12</span></p></li>
+			<li class="recipe"><p><strong class="title">교제 식빵 (빵만들때 곤란한) (490)</strong> 
+				<span>강력분 250</span>, <span>설탕 12</span>, <span>소금 5</span>, <span>이스트 3</span>, <span>분유 5</span>, <span>버터 20</span>, <span>물 195</span></p></li>
+			<li class="recipe"><p><strong class="title">교제 식빵 test</strong> 
+				<span>강력분 300</span>, <span>설탕 15</span>, <span>소금 5</span>, <span>이스트 4</span>, <span>분유 6</span>, <span>버터 23</span>, <span>물 220</span></p></li>
+			<li class="recipe"><p><strong class="title">식빵 19-10-18</strong> 
+				<span>강력분 340</span>, <span>설탕 18</span>, <span>소금 6</span>, <span>이스트 5</span>, <span>분유 30</span>, <span>버터 15</span>, <span>물 240</span></p></li>
+		</ul>
+	</div>
+	<div class="bread-list">
+		<ul>
+			<li class="recipe"><p><strong class="title">단팥빵 (기능사)</strong> 
+				<span>강력분 300</span>, <span>설탕 48</span>, <span>분유 9</span>, <span>소금 6</span>, <span>이스트 21</span>, <span>달걀 45</span>, <span>물 144</span>, <span>버터 36</span></p></li>
+			<li class="recipe"><p><strong class="title">단팥빵</strong> 
+				<span>강력분 150</span>, <span>설탕 12</span>, <span>소금 2</span>, <span>이스트 4</span>, <span>달걀 50</span>, <span>우유 90</span>, <span>버터 10</span></p></li>
+			<li class="recipe"><p><strong class="title">단팥빵(text)</strong> 
+				<span>강력분 265</span>, <span>설탕 25</span>, <span>소금 4</span>, <span>이스트 8</span>, <span>탈지분유 20</span>, <span>달걀 50</span>, <span>생크림 80</span>, <span>물 100</span>, <span>버터 20</span></p></li>
+		</ul>
+	</div>
+	<div class="bread-list">
+		<ul>
+			<li>T55대신 강력분8: 중력분2 를 섞어 써도 된다.</li>
+			<li class="recipe"><p><strong class="title">바게트(곤란한)</strong> 
+				<span>강력분 250(프랑스밀가루)</span>, <span>소금 5</span>, <span>이스트 1</span><span>물 185</span></p></li>
+			<li class="recipe"><p><strong class="title">바게트(유럽식 천연)</strong> 
+				<span>강력분 425(프랑스밀가루)</span>, <span>소금 5</span>, <span>이스트 1</span><span>물 265</span></p></li>
+			<li class="recipe"><p><strong class="title">바게트(<a href="https://www.youtube.com/watch?v=rTOJ15XKQLk&t=370s">Mukgling</a>)</strong> 
+				<span>강력분 251(프랑스밀가루)</span>, <span>소금 5</span>, <span>이스트 1</span><span>물 188</span></p></li>
+		</ul>
+	</div>
+</div>
+
+<script>
+var set = {
+	'fat' : {
+		'milk' : .035,
+		'butter' : 1,
+		'cream' : .38
+	},
+	'water' : {
+		'milk' : .88,
+		'egg' : .75,
+		'honey' : .2,
+		'cream' : .6
+	},
+	'sugar' : {
+		'milk' : .05,
+		'sugar' : 1,
+		'honey' : .8,
+		'cream' : .03
+	}
+}
+var calResult;
+var calResultMy;
+var CC = {};
+var cal = {};
+function calcul(obj){
+	var item = obj.find('span');
+	CC = {
+		'flour' : {'g': 0},
+		'cake' : {'g': 0},
+		'egg' : {'g': 0, 'water': 0},
+		'honey' : {'g': 0, 'sugar': 0, 'water': 0},
+		'milk' : {'g': 0, 'fat': 0, 'water': 0, 'sugar': 0},
+		'cream' : {'g': 0, 'fat': 0, 'water': 0, 'sugar': 0},
+		'butter' : {'g': 0, 'fat': 0},
+		'sugar' : {'g': 0, 'sugar': 0},
+		'water' : {'g': 0},
+		'salt' :{'g': 0},
+		'yeast' : {'g': 0},
+		'powder' : {'g': 0}
+	};
+	$.each(item, function(i){
+		var that = $(this);
+		if (that.hasClass('item')){
+			if(that.text().indexOf('강력') > -1){
+				CC.flour.g = that.find('.value').val()*1;
+			}
+			if(that.text().indexOf('박력') > -1){
+				CC.cake.g = that.find('.value').val()*1;
+			} 
+			if(that.text().indexOf('우유') > -1){
+				CC.milk.g = that.find('.value').val()*1;
+				CC.milk.fat = CC.milk.g* set.fat.milk;
+				CC.milk.water = CC.milk.g * set.water.milk;
+				CC.milk.sugar = CC.milk.g * set.sugar.milk;
+			} 
+			if(that.text().indexOf('생크림') > -1){
+				CC.cream.g = that.find('.value').val()*1;
+				CC.cream.fat = CC.cream.g* set.fat.cream;
+				CC.cream.water = CC.cream.g * set.water.cream;
+				CC.cream.sugar = CC.cream.g * set.sugar.cream;
+			}
+			if(that.text().indexOf('버터') > -1){
+				CC.butter.g = that.find('.value').val()*1;
+				CC.butter.fat = CC.butter.g * set.fat.butter;
+			}
+			if(that.text().indexOf('설탕') > -1){
+				CC.sugar.g = that.find('.value').val()*1;
+				CC.sugar.sugar = CC.sugar.g * set.sugar.sugar;
+			}
+			if(that.text().indexOf('꿀') > -1){
+				CC.honey.g = that.find('.value').val()*1;
+				CC.honey.sugar = CC.honey.g * set.sugar.honey;
+				CC.honey.water = CC.honey.g * set.water.honey;
+			}
+			if(that.text().indexOf('달걀') > -1){
+				CC.egg.g = that.find('.value').val()*1;
+				CC.egg.water = CC.egg.g * set.water.egg;
+			}
+			if(that.text().indexOf('물') > -1){
+				CC.water.g = that.find('.value').val()*1;
+			}
+			if(that.text().indexOf('소금') > -1){
+				CC.salt.g = that.find('.value').val()*1;
+			}
+			if(that.text().indexOf('이스트') > -1){
+				CC.yeast.g = that.find('.value').val()*1;
+			}
+			if(that.text().indexOf('분유') > -1){
+				CC.powder.g = that.find('.value').val()*1;
+			} 
+		} else {
+			if(that.text().indexOf('강력') > -1){
+				CC.flour.g = that.text().replace(/[^0-9]/g,'')*1;
+			}
+			if(that.text().indexOf('박력') > -1){
+				CC.cake.g = that.text().replace(/[^0-9]/g,'')*1;
+			} 
+			if(that.text().indexOf('우유') > -1){
+				CC.milk.g = that.text().replace(/[^0-9]/g,'')*1;
+				CC.milk.fat = CC.milk.g* set.fat.milk;
+				CC.milk.water = CC.milk.g * set.water.milk;
+				CC.milk.sugar = CC.milk.g * set.sugar.milk;
+			} 
+			if(that.text().indexOf('생크림') > -1){
+				CC.cream.g = that.text().replace(/[^0-9]/g,'')*1;
+				CC.cream.fat = CC.cream.g* set.fat.cream;
+				CC.cream.water = CC.cream.g * set.water.cream;
+				CC.cream.sugar = CC.cream.g * set.sugar.cream;
+			}
+			if(that.text().indexOf('버터') > -1){
+				CC.butter.g = that.text().replace(/[^0-9]/g,'')*1;
+				CC.butter.fat = CC.butter.g * set.fat.butter;
+			}
+			if(that.text().indexOf('설탕') > -1){
+				CC.sugar.g = that.text().replace(/[^0-9]/g,'')*1;
+				CC.sugar.sugar = CC.sugar.g * set.sugar.sugar;
+			}
+			if(that.text().indexOf('꿀') > -1){
+				CC.honey.g = that.text().replace(/[^0-9]/g,'')*1;
+				CC.honey.sugar = CC.honey.g * set.sugar.honey;
+				CC.honey.water = CC.honey.g * set.water.honey;
+			}
+			if(that.text().indexOf('달걀') > -1){
+				CC.egg.g = that.text().replace(/[^0-9]/g,'')*1;
+				CC.egg.water = CC.egg.g * set.water.egg;
+			}
+			if(that.text().indexOf('물') > -1){
+				CC.water.g = that.text().replace(/[^0-9]/g,'')*1;
+			}
+			if(that.text().indexOf('소금') > -1){
+				CC.salt.g = that.text().replace(/[^0-9]/g,'')*1;
+			}
+			if(that.text().indexOf('이스트') > -1){
+				CC.yeast.g = that.text().replace(/[^0-9]/g,'')*1;
+			}
+			if(that.text().indexOf('분유') > -1){
+				CC.powder.g = that.text().replace(/[^0-9]/g,'')*1;
+			} 
+		}
+	});
+
+	//console.log(CC);
+	cal.g = CC.butter.g + CC.cake.g +  CC.cream.g + CC.egg.g + CC.flour.g + CC.honey.g + CC.milk.g + CC.powder.g + CC.salt.g + CC.sugar.g + CC.water.g + CC.yeast.g;
+	cal.water = CC.cream.water + CC.honey.water + CC.milk.water + CC.water.g + CC.egg.water;
+	cal.fat = CC.cream.fat + CC.butter.fat + CC.milk.fat;
+	cal.sugar = CC.cream.sugar + CC.honey.sugar + CC.milk.sugar + CC.sugar.g;
+	console.log('전체중량'+ cal.g +', 전체물'+ cal.water+', 전체유지' + cal.fat+', 전체당류'+ cal.sugar);	
+};
+
+(function (){
+	$.each($('.recipe'), function(i){
+		var that = $(this);
+		calcul(that);
+		
+		calResult = '[전중량' + cal.g + 'g, 유지' + (cal.fat/cal.g*100).toFixed(2) + '%, 수분율' + (cal.water/(CC.flour.g + CC.cake.g)*100).toFixed(2) + '%, 당류' + (cal.sugar/cal.g * 100).toFixed(2) +'g(100g당) ]';
+		$('<p>').appendTo(that).text(calResult);
+
+		that.on('click', function(){
+			$('.recipe').removeClass('this');
+			$(this).addClass('this');
+		});
+		
+		// 레시피 클릭시 나의 배합 필드에 자동 입력
+		$('<button class="use-this"><</button>').appendTo(that.find('.title')).on('click', function(){
+			calcul($('.recipe').eq(i));
+			initRecipe(CC);
+		});
+	});
+
+	calcul($('.myRecipe'));
+	cal.g = cal.g.toFixed(1);
+	cal.g = cal.g + '';
+	if(cal.g.indexOf('.0') != -1){
+		cal.g = cal.g.replace('.0','');
+	}
+
+	calResultMy = '전중량 ' + cal.g + 'g, <br>유지' + (cal.fat/cal.g*100).toFixed(2) + '%, <br>수분율 ' + (cal.water/(CC.flour.g + CC.cake.g)*100).toFixed(2) + '%, <br>당류 ' + (cal.sugar/cal.g * 100).toFixed(2) +'g(100g당)';
+		$('<p class="mycalcul-result">').appendTo($('.myRecipe')).html(calResultMy);
+})();
+
+function initMy(){	// 나의 배합에 대한 계산
+	calcul($('.myRecipe'));
+	calResultMy = '전중량 ' + cal.g + 'g, <br> 유지 ' + (cal.fat/cal.g*100).toFixed(2) + '%, <br>수분율 ' + (cal.water/(CC.flour.g + CC.cake.g)*100).toFixed(2) + '%, <br>당류 ' + (cal.sugar/cal.g * 100).toFixed(2) +'g(100g당)';
+	$('.mycalcul-result').html(calResultMy);
+};
+
+function initRecipe(usecc){	// 나의 배합에 수치데이터 입력
+	$.each($('.myRecipe .item'), function(){
+		var that = $(this);
+		if(that.text().indexOf('강력') > -1){
+			that.find('.value').val(usecc.flour.g);
+		} else
+		if(that.text().indexOf('박력') > -1){
+			that.find('.value').val(usecc.cake.g);
+		}  else
+		if(that.text().indexOf('우유') > -1){
+			that.find('.value').val(usecc.milk.g);
+		}  else
+		if(that.text().indexOf('생크림') > -1){
+			that.find('.value').val(usecc.cream.g);
+		} else
+		if(that.text().indexOf('버터') > -1){
+			that.find('.value').val(usecc.butter.g);
+		} else
+		if(that.text().indexOf('설탕') > -1){
+			that.find('.value').val(usecc.sugar.g);
+		} else
+		if(that.text().indexOf('꿀') > -1){
+			that.find('.value').val(usecc.honey.g);
+		} else
+		if(that.text().indexOf('달걀') > -1){
+			that.find('.value').val(usecc.egg.g);
+		} else
+		if(that.text().indexOf('물') > -1){
+			that.find('.value').val(usecc.water.g);
+		} else
+		if(that.text().indexOf('소금') > -1){
+			that.find('.value').val(usecc.salt.g);
+		} else
+		if(that.text().indexOf('이스트') > -1){
+			that.find('.value').val(usecc.yeast.g);
+		} else
+		if(that.text().indexOf('분유') > -1){
+			that.find('.value').val(usecc.powder.g);
+		}
+	});
+	initMy();
+};
+
+function xxxmulti(){		// 나의 배합의 수치에 배수를 계산
+	var want = $('.btn-result input').val()*1;
+	$.each($('.myRecipe .item'), function(){
+		var that = $(this);
+		var val = that.find('.value').val();
+		var number = (val * want).toFixed(1);
+		number = number + '';
+		if(number.indexOf('.0') != -1){
+			number = number.replace('.0','');
+		}
+		that.find('.value').val(number);
+	});
+	
+	initMy();
+};
+
+
+$('.myRecipe input.value').on('propertychange change keyup paste input', function(){
+	initMy();
+});
+
+$(window).ready(function(){
+	var bType = $('.bread-type a');
+	var bList = $('.bread-list');
+	$('.bread-list:not(:eq(0))').hide();
+	$.each(bType, function(i){
+		var that = $(this);
+		that.bind('click', function(){
+			bList.hide();
+			bList.eq(i).show();
+		});
+	});
+});
+</script>
+</body>
+</html>
